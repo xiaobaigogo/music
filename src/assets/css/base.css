@@ -1,0 +1,36 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-size: normal;
+}
+body {
+  width: 1920px;
+  /* margin: 0 auto; */
+}
+
+ul, li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  /* color: black */
+}
+
+input {
+  border: 0;
+  outline: none;
+}
+
+h5 {
+  font-weight: 400;
+}
+img {
+  width: 100%;
+}
+
+button{
+  border: 0;
+  background-color: transparent;
+  outline: none;
+}
