@@ -59,9 +59,11 @@ export default {
 .play-record {
   color: #fff;
   width: 100%;
+  height: 100%;
   font-style: normal;
   padding: 1rem;
   box-sizing: border-box;
+  overflow: auto;
 }
 .title {
   display: flex;

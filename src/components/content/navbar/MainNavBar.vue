@@ -18,13 +18,7 @@
             <router-link :to="{ name: 'playlist' }">歌单</router-link>
           </li>
           <li>
-            <router-link :to="{ name: 'djradio' }">主播电台</router-link>
-          </li>
-          <li>
             <router-link :to="{ name: 'artist' }">歌手</router-link>
-          </li>
-          <li>
-            <router-link :to="{ name: 'album' }">新碟上架</router-link>
           </li>
         </ul>
       </template>
@@ -48,7 +42,29 @@ export default {
   components: {
     NavBar,
   },
-  mounted() {},
+  methods: {
+    getInput() {
+      const input = this.$refs.search;
+      return input;
+    },
+  },
+  mounted() {
+    setTimeout(
+      this.getInput().addEventListener("keyup", (e) => {
+        console.log("main-nav-bar");
+        if (e.keyCode == 13 && this.getInput().value != "") {
+          this.$router.push({
+            path: "/search",
+            query: {
+              keywords: this.getInput().value,
+            },
+          });
+        }
+        // this.getInput().value = "";
+      }),
+      1000
+    );
+  },
 };
 </script>
 

@@ -38,7 +38,7 @@ export default {
     titles: {
       type: Array,
       default() {
-        return [];
+        return ["", "", "歌名", "时长", "歌手", "专辑"];
       },
     },
     contents: {

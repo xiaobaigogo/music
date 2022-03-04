@@ -3,8 +3,8 @@
     <header>
       <div class="title">歌曲列表</div>
       <div class="count">
-        <span>{{ trackLength }}首歌</span>
-        <span
+        <span v-if="trackLength">{{ trackLength }}首歌</span>
+        <span v-if="playCount"
           >播放:<span class="play-count">{{ playCount }}</span> 次</span
         >
       </div>

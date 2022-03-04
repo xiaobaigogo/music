@@ -40,7 +40,6 @@ export function getArtist(type = -1, area = -1, initial = -1, limit = 30, offset
 }
 
 // 获取歌手介绍
-
 export function getArtistsDetail(id) {
   return request({
     url: '/artists',
@@ -143,5 +142,25 @@ export function getNewSongs() {
 export function getGoodPlaylist() {
   return request({
     url: '/personalized'
+  })
+}
+
+// navBar: 获取搜索区域
+export function getSearchResult(text) {
+  return request({
+    url: '/cloudsearch',
+    params: {
+      keywords: text,
+    }
+  })
+}
+
+// 获取专辑详情
+export function getAlbumDetail(id) {
+  return request({
+    url: '/album',
+    params: {
+      id,
+    }
   })
 }

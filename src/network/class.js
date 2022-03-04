@@ -71,3 +71,59 @@ export class PlayListDetail {
     })
   }
 }
+// 搜索结果数据结构
+export class SearchDetail {
+  constructor(songs) {
+    this.songs = songs.map(({ id, name, dt, al, ar }) => {
+      let artist = ar.map(({ id, name }) => { return { arid: id, arname: name } });
+      let album = { alname: al.name, alid: al.id };
+      return { id, name, dt, picUrl: al.picUrl, album, artist }
+    });
+
+    this.artists = [];
+    songs.map(({ ar }) => {
+      let ars = ar.map(({ id }) => { return id });
+      this.artists.push(...ars);
+      return ars;
+    }, this.artists);
+
+    this.albums = songs.map(({ al }) => {
+      return { name: al.name, id: al.id, picUrl: al.picUrl }
+    })
+  }
+}
+// 专辑结果数据结构
+export class AlbumDetail {
+  constructor(album, songs) {
+    this.detail = {
+      id: album.id,
+      name: album.name,
+      picUrl: album.picUrl,
+      publishTime: album.publishTime,
+      artist: {
+        picUrl: album.artist.picUrl,
+        name: album.artist.name,
+        id: album.artist.id,
+      },
+      tags: album.tags,
+      description: album.description,
+      // playCount: playlist.playCount,
+    }
+    // this.tracks = playlist.tracks.map(
+    //   ({ name, dt, ar, al }) => { name, dt, { arname: ar.name, arid: ar.id }, { alname: al.name, alid: al.id } })
+    this.tracks = songs.map(
+      ({ id, name, dt, ar, al }) => {
+        let artist = ar.map(({ name, id }) => {
+          return { arname: name, arid: id }
+        });
+        let album = { alname: al.name, alid: al.id }
+
+        return { id, name, dt, artist, album }
+      }
+    )
+
+    // this.subscriber = playlist.subscribers.map(({ avatarUrl, userId }) => {
+    //   return { avatarUrl, userId }
+    // })
+  }
+}

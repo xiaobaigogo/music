@@ -21,19 +21,14 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ 'views/discover/playlist/PlayList.vue')
   },
   {
-    path: '/discover/djradio',
-    name: 'djradio',
-    component: () => import(/* webpackChunkName: "about" */ 'views/discover/djradio/DjRadio.vue')
-  },
-  {
     path: '/discover/artist',
     name: 'artist',
     component: () => import(/* webpackChunkName: "about" */ 'views/discover/artist/Artist.vue')
   },
   {
-    path: '/discover/album',
+    path: '/album/detail',
     name: 'album',
-    component: () => import(/* webpackChunkName: "about" */ 'views/discover/album/Album.vue')
+    component: () => import(/* webpackChunkName: "about" */ 'views/discover/album/AlbumDetail.vue')
   },
   {
     path: '/login',
@@ -49,7 +44,12 @@ const routes = [
     path: '/playlist/detail',
     name: 'playListDetail',
     component: () => import('views/discover/playlist/PlayListDetail.vue')
-  }
+  },
+  {
+    path: '/search',
+    name: 'search',
+    component: () => import(/* webpackChunkName: "about" */ 'views/search/Search.vue')
+  },
   // {
   //   path: '/discover/toplist',
   //   name: 'toplist',
