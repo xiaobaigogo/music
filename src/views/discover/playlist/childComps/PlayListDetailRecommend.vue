@@ -9,7 +9,9 @@
       <img :src="item.coverImgUrl" alt="" />
       <div class="name">
         <h6 @click="playlistClick(item.id)">{{ item.name }}</h6>
-        <p>by {{ item.creator.nickname }}</p>
+        <p @click="userClick(item.creator.userId)">
+          by {{ item.creator.nickname }}
+        </p>
       </div>
     </div>
   </div>
@@ -32,6 +34,9 @@ export default {
   methods: {
     playlistClick(id) {
       this.$router.push({ path: "/playlist/detail", query: { id: id } });
+    },
+    userClick(id) {
+      this.$router.push({ path: "/user", query: { id } });
     },
   },
 };

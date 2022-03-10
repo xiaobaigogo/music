@@ -117,7 +117,7 @@ export default {
 button {
   position: relative;
   left: 88%;
-  top: 4%;
+  top: 1%;
   width: 6rem;
   font-size: 1rem;
   height: 2.5rem;

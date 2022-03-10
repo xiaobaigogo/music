@@ -1,5 +1,5 @@
 <template>
-  <div class="current-song-father">
+  <div class="current-song-father" v-show="curid != 0 && showHeadAndBottom">
     <audio :src="url" preload="auto"></audio>
     <div class="current-song">
       <div class="play">
@@ -35,7 +35,8 @@
             ></lyrics>
           </div>
         </i>
-        <i class="fac"></i>
+        <!-- <i class="fac"></i> -->
+        <fac :id="curid"></fac>
         <i class="share"></i>
       </div>
       <div class="mode">
@@ -75,8 +76,15 @@ import { formatTime, randomInsert } from "common/utils.js";
 import { getCurrentSong } from "network/api.js";
 import Lyrics from "components/content/currentsong/childComps/Lyrics.vue";
 import PlayRecord from "components/content/currentsong/childComps/PlayRecord.vue";
+import Fac from "components/content/playbutton/Fac.vue";
 export default {
   name: "CurrentSong",
+  props: {
+    showHeadAndBottom: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     return {
       //放的是播放记录，不要乱动
@@ -113,8 +121,10 @@ export default {
   components: {
     Lyrics,
     PlayRecord,
+    Fac,
   },
   mounted() {
+    console.log(this.curid);
     this.$bus.on("playSong", ({ id, picUrl, name, ar, dt }) => {
       if (this.curid == id) {
         this.playList[2] = id;
@@ -122,6 +132,7 @@ export default {
         // console.log(this.curtime);
         this.curtime = 0;
         // console.log(this.curtime);
+        this.begin();
         return;
       }
       // console.log(id);
@@ -260,7 +271,7 @@ export default {
         this.clickProgress == true ||
         this.getAudio().currentTime - this.curtime < 1
       ) {
-        console.log("clickProgress为true");
+        // console.log("clickProgress为true");
         return;
       } else {
         this.curtime = parseInt(this.getAudio().currentTime.toFixed(0));
@@ -278,9 +289,9 @@ export default {
     changeProgress() {
       // console.log(parseFloat(this.getInput().value));
       this.clickProgress = true;
-      console.log(this.clickProgress);
+      // console.log(this.clickProgress);
       // console.log("---change" + this.curtime);
-      console.log("点击的进度条的值" + this.getInput().value);
+      // console.log("点击的进度条的值" + this.getInput().value);
       this.getAudio().currentTime = parseFloat(this.getInput().value);
       this.curtime = parseFloat(this.getInput().value);
       // console.log(this.curtime / this.curdt);
@@ -528,7 +539,7 @@ i:hover {
   width: 20rem;
   border-radius: 2px;
   background: -webkit-linear-gradient(#e72828, #e72828) no-repeat #2e2c2c;
-  background-size: 15% 100%;
+  background-size: 0% 100%;
   margin-right: 1rem;
 }
 
@@ -574,14 +585,13 @@ i:hover {
   border-radius: 0.5rem;
   z-index: 1;
 }
-.fac {
+/* .fac {
   background: url(~assets/images/playbar.png) no-repeat;
   width: 45px;
   height: 45px;
   background-size: 500%;
-  /* background-position: -90px -165px; */
   background-position: -129px -236px;
-}
+} */
 .share {
   background: url(~assets/images/playbar.png) no-repeat;
   width: 45px;

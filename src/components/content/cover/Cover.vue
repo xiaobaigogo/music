@@ -1,7 +1,7 @@
 <template>
   <div class="cover">
     <div class="img">
-      <img :src="dta.picUrl" alt="" :title="dta.name" />
+      <img v-lazy="dta.picUrl" alt="" :title="dta.name" />
     </div>
     <h5>{{ dta.name }}</h5>
     <p v-if="dta.publishTime">

@@ -2,7 +2,7 @@
   <div class="play-record">
     <div class="title">
       <span class="pr-title">播放记录</span>
-      <span class="fav-all">收藏全部</span>
+      <span class="fac-all" @click="facAll">收藏全部</span>
       <span class="clear-all" @click="clearAll">全部清除</span>
     </div>
     <table class="record">
@@ -21,13 +21,17 @@
           }}</span>
         </td>
         <td class="dt">{{ formatTime(song[1].dt, 1000) }}</td>
-        <td clas="del" @click.stop="delSong(song[0])">x</td>
+        <td class="del" @click.stop="delSong(song[0])">x</td>
+        <td class="fac">
+          <fac :id="song[0]" ref="facone"></fac>
+        </td>
       </tr>
     </table>
   </div>
 </template>
 
 <script>
+import Fac from "components/content/playbutton/Fac.vue";
 import { formatTime } from "common/utils.js";
 export default {
   name: "PlayRecord",
@@ -40,6 +44,9 @@ export default {
       default: 0,
     },
   },
+  components: {
+    Fac,
+  },
   methods: {
     formatTime,
     playThis(id) {
@@ -50,6 +57,13 @@ export default {
     },
     delSong(id) {
       this.$emit("delSong", id);
+    },
+    facAll() {
+      console.log(this.songs.size);
+      for (let i = 0; i < this.songs.size; i++) {
+        this.$refs.facone[i].$el.click();
+      }
+      // console.log();
     },
   },
 };
@@ -71,7 +85,7 @@ export default {
 .pr-title {
   flex-basis: 60%;
 }
-.fav-all {
+.fac-all {
   flex-basis: 20%;
 }
 .clear-all {
@@ -90,16 +104,16 @@ tr {
   text-align: center;
 }
 .name {
-  width: 60%;
+  width: 50%;
   /* background-color: blue; */
 }
 .arname {
-  width: 100px;
+  width: 50px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
-  display: flex;
-  flex-direction: column;
+  /* display: flex;
+  flex-direction: column; */
 }
 .arname span {
   text-overflow: ellipsis;
@@ -116,5 +130,12 @@ tr {
   background-position: -180px 5px;
   width: 1rem;
   height: 1rem;
+}
+.del {
+  font-size: 1.3rem;
+}
+.fac {
+  width: 45px;
+  /* background-color: #fff; */
 }
 </style>

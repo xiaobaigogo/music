@@ -1,11 +1,9 @@
 <template>
   <div id="app">
-    <main-nav-bar></main-nav-bar>
-    <!-- <scroll class="scroll"> -->
+    <main-nav-bar v-show="showHeadAndBottom"></main-nav-bar>
     <router-view></router-view>
-    <!-- </scroll> -->
-    <current-song></current-song>
-    <bottom-bar></bottom-bar>
+    <current-song :showHeadAndBottom="showHeadAndBottom"></current-song>
+    <bottom-bar v-show="showHeadAndBottom"></bottom-bar>
   </div>
   <!-- <div>
     <nav>
@@ -29,6 +27,23 @@ export default {
     CurrentSong,
     // Scroll,
     BottomBar,
+  },
+  data() {
+    return {
+      showHeadAndBottom: true,
+      abc: true,
+    };
+  },
+  watch: {
+    $route(to, from) {
+      this.showHeadAndBottom = to.path.indexOf("/login") == -1 ? true : false;
+    },
+  },
+  created() {
+    // 需要初始化，因为watch拿不到初始值，只有在变的时候才能响应
+    this.showHeadAndBottom =
+      this.$route.path.indexOf("/login") == -1 ? true : false;
+    // console.log(this.$route.path.indexOf("/login") == -1);
   },
 };
 </script>

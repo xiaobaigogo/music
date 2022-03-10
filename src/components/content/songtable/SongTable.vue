@@ -18,10 +18,16 @@
             v-for="(item, index) in row.artist"
             :key="index"
             :title="item.arname"
+            @click.stop="enterSinger(item.arid)"
             >{{ item.arname }}</span
           >
         </td>
-        <td v-if="row.album" class="album" :title="row.album.alname">
+        <td
+          v-if="row.album"
+          class="album"
+          :title="row.album.alname"
+          @click.stop="enterAlbum(row.album.alid)"
+        >
           {{ row.album.alname }}
         </td>
       </tr>
@@ -61,6 +67,12 @@ export default {
 
       return { name, dtString, alname };
     },
+    enterSinger(id) {
+      this.$router.push({ path: "/artist", query: { id } });
+    },
+    enterAlbum(id) {
+      this.$router.push({ path: "/album/detail", query: { id } });
+    },
   },
 };
 </script>
@@ -84,6 +96,9 @@ td {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+td:hover {
+  cursor: pointer;
 }
 .trbg {
   background-color: #f8f5f5;

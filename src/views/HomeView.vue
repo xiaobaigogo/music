@@ -35,15 +35,18 @@ export default {
     Cover,
   },
   created() {
-    getNewSongs().then((res) => {
-      let filter = res.data.splice(0, 10);
-      this.newSongs = filter.map(({ name, id, duration, artists, album }) => {
-        let artist = artists.map(({ id, name }) => {
-          return { arid: id, arname: name };
+    getNewSongs()
+      .then((res) => {
+        console.log(res.data);
+        let filter = res.data.splice(0, 10);
+        this.newSongs = filter.map(({ name, id, duration, artists, album }) => {
+          let artist = artists.map(({ id, name }) => {
+            return { arid: id, arname: name };
+          });
+          return { name, id, dt: duration, picUrl: album.picUrl, artist };
         });
-        return { name, id, dt: duration, picUrl: album.picUrl, artist };
-      });
-    });
+      })
+      .catch((err) => err);
     getGoodPlaylist().then((res) => {
       this.goodPlaylist = res.result.map(({ id, name, picUrl, playCount }) => {
         return { id, name, picUrl, playCount };

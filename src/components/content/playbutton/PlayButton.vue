@@ -28,13 +28,15 @@ export default {
       immediate: true,
       handler(newVal) {
         // console.log(newVal);
-        getCurrentSong(newVal).then((res) => {
-          // console.log(res);
-          this.ar = res.songs[0].ar;
-          this.name = res.songs[0].name;
-          this.dt = res.songs[0].dt;
-          this.picUrl = res.songs[0].al.picUrl;
-        });
+        getCurrentSong(newVal)
+          .then((res) => {
+            // console.log(res);
+            this.ar = res.songs[0].ar;
+            this.name = res.songs[0].name;
+            this.dt = res.songs[0].dt;
+            this.picUrl = res.songs[0].al.picUrl;
+          })
+          .catch((err) => err);
       },
     },
   },

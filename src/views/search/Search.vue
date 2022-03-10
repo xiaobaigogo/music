@@ -69,7 +69,7 @@ export default {
       // console.log(to.query.keywords);
       this.value = to.query.keywords;
       getSearchResult(to.query.keywords).then((res) => {
-        this.infos = new SearchDetail(res.result.songs);
+        res.result && (this.infos = new SearchDetail(res.result.songs));
       });
     },
   },

@@ -1,6 +1,11 @@
 <template>
   <div class="album">
-    <cover v-for="(item, index) in albums" :key="index" :dta="item"></cover>
+    <cover
+      v-for="(item, index) in albums"
+      :key="index"
+      :dta="item"
+      @click.stop="enterAlbum(item.id)"
+    ></cover>
   </div>
 </template>
 
@@ -19,6 +24,11 @@ export default {
   },
   components: {
     Cover,
+  },
+  methods: {
+    enterAlbum(id) {
+      this.$router.push({ path: "/album/detail", query: { id } });
+    },
   },
   watch: {
     id: {

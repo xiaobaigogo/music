@@ -1,7 +1,7 @@
 <template>
   <div class="artists-cover">
     <div class="img">
-      <img :src="item.picUrl" alt="" @click="enterSinger(item)" />
+      <img v-lazy="item.picUrl" alt="" @click="enterSinger(item)" />
     </div>
     <h5>{{ item.name }}</h5>
     <span>单曲数：{{ item.musicSize }}</span>

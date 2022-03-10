@@ -3,7 +3,7 @@
     <h5>喜欢这个歌单的人</h5>
     <div class="content">
       <div v-for="(item, index) in subscribers" :key="index">
-        <img :src="item.avatarUrl" alt="" />
+        <img :src="item.avatarUrl" alt="" @click="userClick(item.userId)" />
       </div>
     </div>
   </div>
@@ -18,6 +18,11 @@ export default {
       default() {
         return [];
       },
+    },
+  },
+  methods: {
+    userClick(id) {
+      this.$router.push({ path: "/user", query: { id } });
     },
   },
 };
@@ -44,5 +49,8 @@ img {
   height: 3rem;
   margin: 0.4rem;
   border-radius: 0.5rem;
+}
+img:hover {
+  cursor: pointer;
 }
 </style>
