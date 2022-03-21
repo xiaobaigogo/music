@@ -104,11 +104,11 @@ tr {
   text-align: center;
 }
 .name {
-  width: 50%;
+  width: 40%;
   /* background-color: blue; */
 }
 .arname {
-  width: 50px;
+  max-width: 50px;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;

@@ -331,3 +331,10 @@ export function likeMusicList(uid) {
     }
   })
 }
+
+// 获取banner轮播图数据
+export function getBanner() {
+  return request({
+    url: '/banner',
+  })
+}

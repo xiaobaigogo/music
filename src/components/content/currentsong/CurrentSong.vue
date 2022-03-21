@@ -77,6 +77,7 @@ import { getCurrentSong } from "network/api.js";
 import Lyrics from "components/content/currentsong/childComps/Lyrics.vue";
 import PlayRecord from "components/content/currentsong/childComps/PlayRecord.vue";
 import Fac from "components/content/playbutton/Fac.vue";
+import { songStorage } from "@/mode/Storage.js";
 export default {
   name: "CurrentSong",
   props: {
@@ -124,7 +125,11 @@ export default {
     Fac,
   },
   mounted() {
-    console.log(this.curid);
+    // 刚进入页面后读取是否有歌单
+    // console.log(JSON.parse(localStorage.getItem("song")));
+    this.initSongs(songStorage.getItem("song"), songStorage.getItem("cursong"));
+    // console.log(this.curid);
+    // console.log(Storage);
     this.$bus.on("playSong", ({ id, picUrl, name, ar, dt }) => {
       if (this.curid == id) {
         this.playList[2] = id;
@@ -161,11 +166,11 @@ export default {
         // console.log(this.songs);
       }
       this.playList[2] = id;
-      // console.log(this.getAudio());
-      // 设置定时器是因为当前还没创建好audio这个节点？所以就等一等
-      setTimeout(() => {
+
+      this.$nextTick(() => {
+        // 等创建好dom节点再播放
         this.begin();
-      }, 500);
+      });
     });
 
     // 播放歌单的全部播放
@@ -211,10 +216,11 @@ export default {
         this.getInput().max = this.curdt;
         this.playList[2] = this.curid;
         // console.log(this.getAudio());
-        // 设置定时器是因为当前还没创建好audio这个节点？所以就等一等
-        setTimeout(() => {
+
+        this.$nextTick(() => {
+          // 等创建好dom节点再播放
           this.begin();
-        }, 500);
+        });
       });
     });
 
@@ -227,8 +233,10 @@ export default {
     this.getAudio().addEventListener("ended", this.next);
 
     // console.log("----1---");
-  },
 
+    // 离开网站后，保存信息
+    window.addEventListener("beforeunload", this.saveSongs);
+  },
   methods: {
     formatTime,
     randomInsert,
@@ -272,6 +280,7 @@ export default {
         this.getAudio().currentTime - this.curtime < 1
       ) {
         // console.log("clickProgress为true");
+        // this.changebegin();
         return;
       } else {
         this.curtime = parseInt(this.getAudio().currentTime.toFixed(0));
@@ -344,12 +353,12 @@ export default {
       // console.log("-------");
       // console.log(id);
       this.songs.delete(id);
-      console.log(this.songs.has(id));
+      // console.log(this.songs.has(id));
 
       let index0 = this.playList[0].indexOf(id);
       let index1 = this.playList[1].indexOf(id);
-      console.log(index0);
-      console.log(index1);
+      // console.log(index0);
+      // console.log(index1);
 
       if (index0 == 0) {
         this.playList[0].shift();
@@ -360,7 +369,7 @@ export default {
         let temp1 = arrTemp.slice(0, index0);
         let temp2 = arrTemp.slice(index0 + 1);
         this.playList[0] = temp1.concat(temp2);
-        console.log(this.playList[0]);
+        // console.log(this.playList[0]);
       }
 
       if (index1 == 0) {
@@ -372,7 +381,7 @@ export default {
         let temp1 = arrTemp.slice(0, index1);
         let temp2 = arrTemp.slice(index1 + 1);
         this.playList[1] = temp1.concat(temp2);
-        console.log(this.playList[1]);
+        // console.log(this.playList[1]);
       }
     },
     // 上一首
@@ -392,6 +401,8 @@ export default {
     // 下一首
     next() {
       if (this.mode == 2 || this.playList[this.mode].length == 0) {
+        // console.log("next");
+        // this.isPlay = false;
         return;
       }
       // console.log("next");
@@ -413,7 +424,7 @@ export default {
       }
       console.log(this.playList);
     },
-    // 发出当前id
+    // 发出当前id，让对应的播放按钮变红色
     issueNowId() {
       this.$bus.emit("nowId", this.curid);
     },
@@ -429,6 +440,49 @@ export default {
       }
       // console.log(arrTemp);
       return arrTemp;
+    },
+    // 离开前保存数据
+    saveSongs() {
+      // console.log("uuu");
+      let expire = Date.now() + 1000 * 60 * 60 * 24;
+      let cursong = {
+        curid: this.curid,
+        curars: [...this.curars],
+        curname: this.curname,
+        curpic: this.curpic,
+        curdt: this.curdt,
+      };
+      // console.log(cursong);
+      songStorage.setItem("cursong", cursong, expire);
+      songStorage.setItem(
+        "song",
+        // Object.fromEntries(this.songs.entries()),
+        this.songs,
+        expire
+      );
+
+      // console.log(expire);
+    },
+    // 重新进入时读取数据
+    initSongs(songs, cursong) {
+      // console.log(songs);
+      for (let key in songs) {
+        this.songs.set(parseInt(key), songs[key]);
+        this.playList[0].push(parseInt(key));
+        this.playList[1].push(parseInt(key));
+      }
+      // console.log(cursong);
+      let { curars, curid, curname, curpic, curdt } = cursong;
+      this.curid = curid;
+      this.curars = curars;
+      this.curname = curname;
+      this.curpic = curpic;
+      this.curdt = curdt;
+      this.url = this.baseUrl + curid + ".mp3";
+
+      // 三种播放模式
+      this.playList[2] = this.curid;
+      this.playList[1] = this.randomArr(this.playList[1]);
     },
   },
 };

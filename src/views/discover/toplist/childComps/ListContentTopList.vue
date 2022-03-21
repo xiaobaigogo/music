@@ -79,8 +79,13 @@ thead > tr > td:first-child {
   width: 10%;
 }
 .songname {
+  /* display: flex; */
   width: 50%;
   text-align: left;
+  white-space: nowrap;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 thead > tr > td:nth-child(3) {
@@ -118,12 +123,13 @@ i {
   box-sizing: border-box;
   background: url(~assets/images/table.png) no-repeat;
   background-position: 0 -127px;
-  margin: 0 5px;
+  margin: 1px 5px;
   width: 20px;
   height: 18px;
   overflow: hidden;
   margin-left: 0.5rem;
-  /* vertical-align:middle; */
+  /* flex-basis: 10%; */
+  vertical-align: bottom;
 }
 i:hover {
   background-position: -20px -127px;
@@ -131,8 +137,10 @@ i:hover {
 }
 .songname span {
   display: inline-block;
-  vertical-align: middle;
-  text-align: center;
-  /* width: calc(100% - 20px); */
+  /* vertical-align: middle; */
+  text-align: left;
+  max-width: 25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

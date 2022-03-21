@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <main-nav-bar v-show="showHeadAndBottom"></main-nav-bar>
+    <!-- <keep-alive> -->
     <router-view></router-view>
+    <!-- </keep-alive> -->
     <current-song :showHeadAndBottom="showHeadAndBottom"></current-song>
     <bottom-bar v-show="showHeadAndBottom"></bottom-bar>
   </div>
@@ -19,6 +21,8 @@ import MainNavBar from "components/content/navbar/MainNavBar.vue";
 import CurrentSong from "components/content/currentsong/CurrentSong.vue";
 // import Scroll from "components/common/scroll/Scroll.vue";
 import BottomBar from "components/content/bottombar/BottomBar.vue";
+import { getCurrentInstance } from "@vue/runtime-core";
+// import Toast from "components/common/toast";
 
 export default {
   name: "APP",
@@ -37,7 +41,16 @@ export default {
   watch: {
     $route(to, from) {
       this.showHeadAndBottom = to.path.indexOf("/login") == -1 ? true : false;
+      // console.log("----");
+      // Toast({ message: "去往其他页面" });
     },
+  },
+  setup() {
+    const internalInstance = getCurrentInstance();
+    // console.log(internalInstance.appContext.config.globalProperties.$toast);
+    internalInstance.appContext.config.globalProperties.$toast({
+      message: "去往其他页面",
+    });
   },
   created() {
     // 需要初始化，因为watch拿不到初始值，只有在变的时候才能响应

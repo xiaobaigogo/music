@@ -1,16 +1,22 @@
-import Toast from './Toast'
-const obj = {}
+import { createVNode, render } from 'vue'
+import Toast from './Toast.vue'
 
-obj.install = function (Vue) {
-  const toastConstructor = Vue.extend(Toast);
+const div = document.createElement('div')
+div.setAttribute('class', 'toast-wrapper')
+document.body.appendChild(div)
 
-  const toast = new toastConstructor();
+let time = null
+export default ({ message }) => {
+  // 3. 创建虚拟dom          (组件对象， props)
+  const vnode = createVNode(Toast, { message })
+  // 4. 把虚拟dom渲染到div
+  render(vnode, div)
 
-  toast.$mount(document.createElement('div'));
+  // 5. 设置定时器清空
+  clearTimeout(time)
+  time = setTimeout(() => {
+    render(null, div)
+  }, 2000)
 
-  document.body.appendChild(toast.$el);
-
-  Vue.config.globalProperties.$toast = toast;
+  console.log('message.js')
 }
-
-export default obj;

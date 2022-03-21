@@ -9,7 +9,7 @@
         <td class="cover">
           <img :src="item.picUrl" alt="" />
         </td>
-        <td class="artists">
+        <td class="artists" :title="allArtistName(item)">
           <span v-for="(ar, index) in item.artist" :key="index">{{
             ar.arname
           }}</span>
@@ -41,6 +41,24 @@ export default {
   components: {
     PlayButton,
   },
+  computed: {
+    allArtistName() {
+      return (item) => {
+        // console.log(item.artist);
+        return item.artist
+          .map((ar) => {
+            return ar.arname;
+          })
+          .join(",");
+      };
+      console.log(item);
+      // return item.artist
+      //   .map((ar) => {
+      //     return ar.name;
+      //   })
+      //   .join(",");
+    },
+  },
   methods: {
     formatTime,
     ShowIndex(e) {
@@ -52,6 +70,7 @@ export default {
       e.target.getElementsByTagName("span")[0].style.display = "none";
       e.target.getElementsByTagName("i")[0].style.display = "inline-block";
     },
+    // allArtistName()
   },
 };
 </script>
@@ -82,14 +101,15 @@ tr {
   width: 10%;
 }
 .artists {
-  width: 10%;
+  max-width: 50px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* height: 100%; */
 }
 .artists > span {
   display: inline-block;
   max-width: 6rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 .name {
   width: 60%;

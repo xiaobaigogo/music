@@ -2,7 +2,7 @@
 export function formatTime(tm, ms) {
   let time = tm / ms;
   let m = Math.floor(time / 60);
-  let s = (time % 60).toFixed(0);
+  let s = Math.floor((time % 60));
   let mS = "";
   let sS = "";
   if (s == 60) {
@@ -15,6 +15,8 @@ export function formatTime(tm, ms) {
   }
   if (m < 10) {
     mS = "0" + m;
+  } else if (m < 60) {
+    mS = m + "";
   }
   return `${mS}:${sS}`;
 }

@@ -1,7 +1,8 @@
 <template>
   <div class="home-view">
-    <h5>推荐歌单</h5>
+    <home-swiper class="swiper"></home-swiper>
     <div class="good-playlist">
+      <h5>推荐歌单</h5>
       <cover
         v-for="(item, index) in goodPlaylist"
         :key="index"
@@ -9,18 +10,21 @@
         @click="playlistClick(item.id)"
       ></cover>
     </div>
-    <div>
+    <div class="new-songs">
       <h5>推荐歌曲</h5>
       <new-songs :newSongs="newSongs"></new-songs>
     </div>
+    <back-top></back-top>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-// import Scroll from "components/common/scroll/Scroll.vue";
+
+import { backTopMixin } from "common/mixins.js";
 import Cover from "components/content/cover/Cover.vue";
 import NewSongs from "views/homeviewchild/NewSongs.vue";
+import HomeSwiper from "./homeviewchild/HomeSwiper.vue";
 import { getNewSongs, getGoodPlaylist } from "network/api.js";
 export default {
   name: "HomeView",
@@ -30,14 +34,17 @@ export default {
       goodPlaylist: [],
     };
   },
+  mixins: [backTopMixin],
   components: {
     NewSongs,
     Cover,
+    HomeSwiper,
+    // BackTop,
   },
   created() {
     getNewSongs()
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         let filter = res.data.splice(0, 10);
         this.newSongs = filter.map(({ name, id, duration, artists, album }) => {
           let artist = artists.map(({ id, name }) => {
@@ -65,7 +72,13 @@ export default {
 </script>
 
 <style scoped>
-.home-view {
+/* .home-view {
+  width: 1200px;
+  margin: 0 auto;
+} */
+.good-playlist,
+.new-songs,
+h5 {
   width: 1200px;
   margin: 0 auto;
 }

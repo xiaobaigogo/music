@@ -16,7 +16,7 @@ app.config.globalProperties.$bus = new mitt();
 
 
 // 挂载toast组件
-// app.config.globalProperties.$toast = toast;
+app.config.globalProperties.$toast = toast;
 
 app.use(store).use(router).use(lazyPlugin, {
   loading: require('assets/images/replace.png'), // 图片加载时默认图片

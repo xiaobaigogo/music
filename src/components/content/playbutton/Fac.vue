@@ -55,6 +55,8 @@ export default {
             }
           })
           .catch((err) => err);
+      } else {
+        // 调用toast说明未登录，请登录后再使用该功能
       }
     },
   },
@@ -80,8 +82,11 @@ export default {
     id: {
       // 主要是监测播放栏的点赞应不应该变色
       immediate: true,
-
       handler(newVal) {
+        if (!this.getId) {
+          // 未登录时没变化
+          return;
+        }
         this.$store.dispatch("setUserLikelist");
 
         likeMusicList(this.getId).then((res) => {

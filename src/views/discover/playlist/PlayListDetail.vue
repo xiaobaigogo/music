@@ -69,7 +69,7 @@ export default {
     },
   },
   created() {
-    console.log("创建组件");
+    // console.log("创建组件");
     getPlayListDetail(this.$route.query.id).then((res) => {
       let details = new PlayListDetail(res.playlist);
       this.playListDetailHeader = details.detail;
