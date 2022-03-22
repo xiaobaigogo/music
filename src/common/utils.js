@@ -1,3 +1,5 @@
+import toast from "@/components/common/toast";
+
 // 格式化时间（分钟：秒）
 export function formatTime(tm, ms) {
   let time = tm / ms;
@@ -71,5 +73,26 @@ export function formatCount(num) {
     return Math.floor(num / 10000) + "万";
   } else {
     return Math.floor(num / 100000000) + "亿";
+  }
+}
+
+// 防抖函数
+import Toast from "components/common/toast"
+export function debounce(func, delay) {
+  let timer = null;
+  return function abc(...args) {
+    let _this = this;
+    // console.log(timer);
+    if (timer) {
+      Toast({ message: "操作过于频繁，请稍后再试" });
+    }
+    if (!timer) {
+      console.log('执行');
+      func.apply(_this, args);
+    }
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      timer = null;
+    }, delay);
   }
 }

@@ -30,7 +30,7 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  border-radius: 20%;
+  border-radius: 5px;
   padding: 0.5rem;
   background-color: rgba(0, 0, 0, 0.8);
   color: #fff;

@@ -3,9 +3,9 @@
     <audio :src="url" preload="auto"></audio>
     <div class="current-song">
       <div class="play">
-        <i class="icon prev" @click="prev"></i>
+        <i class="icon prev" @click="debouncePrev"></i>
         <i class="icon begin" @click="changebegin" :class="{ ing: isPlay }"></i>
-        <i class="icon next" @click="next"></i>
+        <i class="icon next" @click="debounceNext"></i>
       </div>
       <div class="info">
         <div class="img">
@@ -72,7 +72,8 @@
 </template>
 
 <script>
-import { formatTime, randomInsert } from "common/utils.js";
+import Toast from "components/common/toast";
+import { formatTime, randomInsert, debounce } from "common/utils.js";
 import { getCurrentSong } from "network/api.js";
 import Lyrics from "components/content/currentsong/childComps/Lyrics.vue";
 import PlayRecord from "components/content/currentsong/childComps/PlayRecord.vue";
@@ -116,6 +117,9 @@ export default {
       mode: 0,
       // check
       tracks: [],
+      // debounce
+      debounceNext: debounce(this.next, 2000),
+      debouncePrev: debounce(this.prev, 2000),
     };
   },
 
@@ -257,7 +261,6 @@ export default {
       return col_filled;
     },
     changebegin() {
-      // console.log(this.getAudio());
       const audio = this.getAudio();
       if (audio.paused) {
         // console.log("----play");
@@ -386,39 +389,46 @@ export default {
     },
     // 上一首
     prev() {
-      if (this.mode == 2 || this.playList[this.mode].length == 0) {
+      if (this.playList[this.mode].length == 0) {
+        this.getAudio().pause();
+        this.isPlay = false;
+        return;
+      }
+      if (this.mode == 2) {
+        this.$bus.emit("playSong", { id: this.playList[this.mode] });
         return;
       }
       let cur = this.playList[this.mode].indexOf(this.curid);
       let prev = 0;
-      // if(cur == this.playList[this.mode].length - 1) {
-      //   prev = 0;
-      // } else if(cur == this.playList[this.mode].length - 1)
       prev = cur == 0 ? this.playList[this.mode].length - 1 : cur - 1;
       let id = this.playList[this.mode][prev];
       this.$bus.emit("playSong", { id });
     },
     // 下一首
     next() {
-      if (this.mode == 2 || this.playList[this.mode].length == 0) {
-        // console.log("next");
-        // this.isPlay = false;
+      if (this.playList[this.mode].length == 0) {
+        this.getAudio().pause();
+        this.isPlay = false;
+        return;
+      }
+      if (this.mode == 2) {
+        this.$bus.emit("playSong", { id: this.playList[this.mode] });
         return;
       }
       // console.log("next");
       let cur = this.playList[this.mode].indexOf(this.curid);
       let next = 0;
-      // if(cur == this.playList[this.mode].length - 1) {
-      //   prev = 0;
-      // } else if(cur == this.playList[this.mode].length - 1)
       next = cur == this.playList[this.mode].length - 1 ? 0 : cur + 1;
       let id = this.playList[this.mode][next];
       this.$bus.emit("playSong", { id });
     },
+    // 防抖版下一首
+
     // 改变播放模式
     changeMode() {
       if (this.mode == 2) {
         this.mode = 0;
+        // this.playList[2] = this.id;
       } else {
         this.mode++;
       }

@@ -41,16 +41,16 @@ export default {
   watch: {
     $route(to, from) {
       this.showHeadAndBottom = to.path.indexOf("/login") == -1 ? true : false;
-      // console.log("----");
-      // Toast({ message: "去往其他页面" });
     },
   },
   setup() {
     const internalInstance = getCurrentInstance();
     // console.log(internalInstance.appContext.config.globalProperties.$toast);
-    internalInstance.appContext.config.globalProperties.$toast({
-      message: "去往其他页面",
-    });
+    // const toastMessage = internalInstance.appContext.config.globalProperties.$toast({
+    //   message: "去往其他页面",
+    // });
+    // return toastMessage;
+    return internalInstance;
   },
   created() {
     // 需要初始化，因为watch拿不到初始值，只有在变的时候才能响应
