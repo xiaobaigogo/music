@@ -1,29 +1,39 @@
 # cloud-music
 
-## Project setup
-```
-npm install
-```
+## 项目功能
+* 音乐播放（切歌、播放列表、播放进度、播放音量、歌词展示、歌曲播放模式）
+* 搜索（搜索结果包括单曲、歌手、专辑、歌单）
+* 各详情页面展示（歌手、专辑、歌单、用户主页）
+* 用户相关（登录、收藏歌曲）
 
-### Compiles and hot-reloads for development
+## 安装步骤
 ```
+<!-- 后端接口：本项目api的是 Binaryify 后端api 地址: https://github.com/Binaryify/NeteaseCloudMusicApi -->
+git clone https://github.com/Binaryify/NeteaseCloudMusicApi
+node app.js
+
+<!-- 前端展示 -->
+git clone https://github.com/xiaobaigogo/music.git
+npm install
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## 项目截图
+## 首页
+![](images/2022-06-09-17-29-06.png)
+## 排行榜
+![](images/2022-06-09-17-30-34.png)
+## 歌单
+![](images/2022-06-09-17-31-16.png)
+## 歌单详情
+![](images/2022-06-09-17-30-02.png)
+## 歌手
+![](images/2022-06-09-17-32-03.png)
+## 搜索
+![](images/2022-06-09-17-32-43.png)
+## 登录
+![](images/2022-06-09-17-33-10.png)
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
-
-
-### 前端优化
-1、网站中大量运用了表格table，并且table中有元素i，划过会触发回流，为了减少table的回流次数，给table设置table-layout为auto或fixed，可以让table一行一行渲染，限制回流影响范围。
-
-2、轮播图：给图片加上translate，这样就能够建立一个新图层。
-
-3、进度条：与轮播图同理，将频繁运行的动画变为图层，图层能够阻止该节点回流影响别的元素。比如将进度条在组件中的位置设置为fixed。
-
-4、回到顶部：同理设置为fixed。
+## 特别感谢
+Binaryify https://github.com/Binaryify
+coderps123 https://github.com/coderps123/music

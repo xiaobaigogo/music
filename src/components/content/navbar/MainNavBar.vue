@@ -2,8 +2,9 @@
   <div class="bg">
     <nav-bar class="main-nav-bar">
       <template v-slot:left>
-        <router-link :to="{ name: 'home' }">
+        <router-link :to="{ name: 'home' }" style="display:flex;height:100%;justify-content:center;align-items:center;">
           <div class="logo"></div>
+          <span>在线音乐网站</span>
         </router-link>
       </template>
       <template v-slot:center>
@@ -49,149 +50,164 @@
 </template>
 
 <script>
-import { getUserAccount, logout } from "network/api.js";
+  import { getUserAccount, logout } from "network/api.js";
 
-import NavBar from "components/common/navbar/NavBar.vue";
-export default {
-  name: "MainNavBar",
-  components: {
-    NavBar,
-  },
-  data() {
-    return {
-      showStatus: false,
-    };
-  },
-  computed: {
-    user() {
-      console.log(this.$store.getters.getbriefUser);
-      return this.$store.getters.getbriefUser;
+  import NavBar from "components/common/navbar/NavBar.vue";
+  export default {
+    name: "MainNavBar",
+    components: {
+      NavBar,
     },
-  },
-  methods: {
-    getInput() {
-      const input = this.$refs.search;
-      return input;
+    data() {
+      return {
+        showStatus: false,
+      };
     },
-    isShowStatus() {
-      this.showStatus = !this.showStatus;
+    computed: {
+      user() {
+        console.log(this.$store.getters.getbriefUser);
+        return this.$store.getters.getbriefUser;
+      },
     },
-    enterUser() {
-      console.log(this.user.userId);
-      let id = this.user.userId;
-      this.$router.push({ path: "/user", query: { id } });
+    methods: {
+      getInput() {
+        const input = this.$refs.search;
+        return input;
+      },
+      isShowStatus() {
+        this.showStatus = !this.showStatus;
+      },
+      enterUser() {
+        console.log(this.user.userId);
+        let id = this.user.userId;
+        this.$router.push({ path: "/user", query: { id } });
+      },
+      logOut() {
+        logout().then((res) => {
+          console.log(res);
+        });
+        this.$store.commit("changeUserInfo", null);
+      },
     },
-    logOut() {
-      logout().then((res) => {
+    created() {
+      getUserAccount().then((res) => {
         console.log(res);
+        this.$store.commit("changeUserInfo", res.profile);
       });
-      this.$store.commit("changeUserInfo", null);
     },
-  },
-  created() {
-    getUserAccount().then((res) => {
-      console.log(res);
-      this.$store.commit("changeUserInfo", res.profile);
-    });
-  },
-  mounted() {
-    setTimeout(
-      this.getInput().addEventListener("keyup", (e) => {
-        console.log("main-nav-bar");
-        if (e.keyCode == 13 && this.getInput().value != "") {
-          this.$router.push({
-            path: "/search",
-            query: {
-              keywords: this.getInput().value,
-            },
-          });
-        }
-        // this.getInput().value = "";
-      }),
-      1000
-    );
-  },
-};
+    mounted() {
+      setTimeout(
+        this.getInput().addEventListener("keyup", (e) => {
+          console.log("main-nav-bar");
+          if (e.keyCode == 13 && this.getInput().value != "") {
+            this.$router.push({
+              path: "/search",
+              query: {
+                keywords: this.getInput().value,
+              },
+            });
+          }
+          // this.getInput().value = "";
+        }),
+        1000
+      );
+    },
+  };
 </script>
 
 <style scoped>
-.bg {
-  width: 1920px;
-  background-color: rgb(58, 56, 56);
-  box-shadow: 0 2px rgba(1, 1, 1, 0.1);
-}
-.main-nav-bar {
-  width: 1400px;
-  margin: 0 auto;
-}
-.logo {
-  background: url(assets/images/topbar.png) no-repeat;
-  background-position: 0 -15px;
-  height: 100%;
-}
-.list {
-  display: flex;
-  font-size: 0.95rem;
-  justify-content: space-evenly;
-  align-items: center;
-  height: 100%;
-}
-a {
-  color: #fff;
-}
-.right {
-  display: flex;
-  height: 100%;
-  align-items: center;
-  justify-content: right;
-  padding-right: 2rem;
-}
-.search {
-  height: 24px;
-  border-radius: 12px;
-  background-color: #fff;
-  display: flex;
-  align-items: center;
-  margin-right: 1.5rem;
-  width: 70%;
-}
-.search i {
-  background: url(~assets/images/topbar.png) no-repeat;
-  background-position: -9px -108px;
-  margin: 0 5px;
-  width: 15px;
-  height: 15px;
-  overflow: hidden;
-}
-.search input {
-  width: calc(100% - 25px - 12px);
-  /* border */
-}
-.user {
-  width: 2rem;
-  height: 2rem;
-  position: relative;
-}
-.user:hover {
-  cursor: pointer;
-}
-img {
-  width: 100%;
-  border-radius: 50%;
-}
-.user-status {
-  z-index: 10;
-  position: absolute;
-  top: 38px;
-  right: -140px;
-  color: #fff;
-  background-color: rgba(1, 1, 1, 0.7);
-}
-.user-status li {
-  width: 10rem;
-  text-align: center;
-  padding: 0.5rem 0;
-  /* background-color: black; */
-  /* color: black; */
-}
+  .bg {
+    width: 100vw;
+    background-color: rgb(58, 56, 56);
+    box-shadow: 0 2px rgba(1, 1, 1, 0.1);
+  }
+
+  .main-nav-bar {
+    width: 100vw;
+    margin: 0 auto;
+  }
+
+  .logo {
+    background: url(assets/images/music-logo.png);
+    background-size: 40px 40px;
+    background-repeat: no-repeat;
+    height: 100%;
+    width: 30%;
+  }
+
+  .list {
+    display: flex;
+    font-size: 0.95rem;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 100%;
+  }
+
+  a {
+    color: #fff;
+  }
+
+  .right {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: right;
+    padding-right: 2rem;
+  }
+
+  .search {
+    height: 24px;
+    border-radius: 12px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    margin-right: 1.5rem;
+    width: 70%;
+  }
+
+  .search i {
+    background: url(~assets/images/topbar.png) no-repeat;
+    background-position: -9px -108px;
+    margin: 0 5px;
+    width: 15px;
+    height: 15px;
+    overflow: hidden;
+  }
+
+  .search input {
+    width: calc(100% - 25px - 12px);
+    /* border */
+  }
+
+  .user {
+    width: 2rem;
+    height: 2rem;
+    position: relative;
+  }
+
+  .user:hover {
+    cursor: pointer;
+  }
+
+  img {
+    width: 100%;
+    border-radius: 50%;
+  }
+
+  .user-status {
+    z-index: 10;
+    position: absolute;
+    top: 38px;
+    right: -140px;
+    color: #fff;
+    background-color: rgba(1, 1, 1, 0.7);
+  }
+
+  .user-status li {
+    width: 10rem;
+    text-align: center;
+    padding: 0.5rem 0;
+    /* background-color: black; */
+    /* color: black; */
+  }
 </style>
