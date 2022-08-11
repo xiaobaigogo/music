@@ -1,6 +1,6 @@
 <template>
   <div class="current-song-father" v-show="curid != 0 && showHeadAndBottom">
-    <audio :src="url" preload="auto"></audio>
+    <audio :src="cururl" preload="auto"></audio>
     <div class="current-song">
       <div class="play">
         <i class="icon prev" @click="debouncePrev"></i>
@@ -60,11 +60,12 @@
 <script>
   import Toast from "components/common/toast";
   import { formatTime, randomInsert, debounce } from "common/utils.js";
-  import { getCurrentSong } from "network/api.js";
+  import { getCurrentSong, getCurrentSongURL, getBlob } from "network/api.js";
   import Lyrics from "components/content/currentsong/childComps/Lyrics.vue";
   import PlayRecord from "components/content/currentsong/childComps/PlayRecord.vue";
   import Fac from "components/content/playbutton/Fac.vue";
   import { songStorage } from "@/mode/Storage.js";
+  import { songIndexDB } from "@/mode/indexDB.js";
   export default {
     name: "CurrentSong",
     props: {
@@ -80,8 +81,6 @@
         // 里面存放三个数组，对应三个播放模式，0：循环 1：随机 2：单曲
         // 子数组存放歌曲id，设置播放模式之后就可以选取不同的数组，根据数组id去播放歌曲。
         playList: [[], [], []],
-        baseUrl: "https://music.163.com/song/media/outer/url?id=",
-        url: "",
         // 播放状态
         isPlay: false,
         // 当前播放的歌曲信息
@@ -91,6 +90,7 @@
         curars: [],
         curtime: 0,
         curdt: 0,
+        cururl: "",
         // 展示音量栏
         showCol: false,
         // 展示歌词栏
@@ -116,11 +116,10 @@
     },
     mounted() {
       // 刚进入页面后读取是否有歌单
-      // console.log(JSON.parse(localStorage.getItem("song")));
       this.initSongs(songStorage.getItem("song"), songStorage.getItem("cursong"));
       // console.log(this.curid);
       // console.log(Storage);
-      this.$bus.on("playSong", ({ id, picUrl, name, ar, dt }) => {
+      this.$bus.on("playSong", async ({ id, picUrl, name, ar, dt, url, flag }) => {
         if (this.curid == id) {
           this.playList[2] = id;
           this.getAudio().currentTime = 0;
@@ -134,7 +133,7 @@
         // console.log(picUrl);
         // console.log(name);
         // console.log(ar);
-        this.url = "";
+        // this.url = "";
         this.curid = id;
         this.issueNowId();
         this.curpic = picUrl ? picUrl : this.songs.get(id).picUrl;
@@ -142,11 +141,19 @@
         this.curars = ar ? ar : this.songs.get(id).ar;
         this.curtime = 0;
         this.curdt = dt ? dt / 1000 : this.songs.get(id).dt / 1000; //传过来的dt是毫秒，所以要/1000
+        // url
+        if(url) {
+          this.cururl = url;
+        } else if(this.songs.get(id).url) {
+          this.cururl = this.songs.get(id).url;
+        } else {
+          await this.getcururl(id);
+        }
         // console.log(this.curid, this.curpic, this.curname, this.curars);
-        this.url = this.baseUrl + id + ".mp3";
+
         this.getInput().max = this.curdt;
         if (!this.songs.has(id)) {
-          this.songs.set(id, { picUrl, name, ar, dt });
+          this.songs.set(id, { picUrl, name, ar, dt, url });
           this.playList[0].push(id);
           this.playList[1].splice(
             this.randomInsert(this.playList[1].length),
@@ -157,9 +164,17 @@
         }
         this.playList[2] = id;
 
-        this.$nextTick(() => {
+
+        this.$nextTick((flag) => {
           // 等创建好dom节点再播放
           this.begin();
+
+          // 离线缓存歌曲  // 放在nextTick是为了不阻碍播放渲染
+          if (flag == false) {
+            getBlob(url).then((blob) => {
+              songIndexDB.insertBase(this.$store.state.songDB, this.$store.state.songDBobjectStoreName, { id, picUrl, name, ar: JSON.stringify(ar), dt, url, blob, createTime: Date.now() });
+            });
+          }
         });
       });
 
@@ -168,6 +183,7 @@
         this.clearAll();
         const ids = tracksId.join(",");
         getCurrentSong(ids).then((res) => {
+          // 先获取图片这些信息，url等后面需要播放的时候再去请求
           this.tracks = [];
           this.tracks = res.songs.map(({ name, id, dt, al, ar }) => {
             ar = ar.map(({ id, name }) => {
@@ -188,7 +204,6 @@
             this.playList[1][i] = this.tracks[i].id;
           }
 
-          this.url = "";
           this.curid = tracksId[0];
 
           this.playList[1] = this.randomArr(this.playList[1]);
@@ -201,16 +216,25 @@
           this.curars = this.songs.get(this.curid).ar;
           this.curtime = 0;
           this.curdt = this.songs.get(this.curid).dt / 1000; //传过来的dt是毫秒，所以要/1000
+
+          // 请求歌曲url
+          this.getcururl(this.curid).then(() => {
+            this.songs.get(this.curid)['url'] = this.cururl;
+            this.getInput().max = this.curdt;
+            this.playList[2] = this.curid;
+
+            this.$nextTick(() => {
+              // 等创建好dom节点再播放
+              this.begin();
+            });
+          });
           // console.log(this.curid, this.curpic, this.curname, this.curars);
-          this.url = this.baseUrl + this.curid + ".mp3";
-          this.getInput().max = this.curdt;
-          this.playList[2] = this.curid;
+          // this.url = this.baseUrl + this.curid + ".mp3";
+
+
           // console.log(this.getAudio());
 
-          this.$nextTick(() => {
-            // 等创建好dom节点再播放
-            this.begin();
-          });
+
         });
       });
 
@@ -225,7 +249,7 @@
       // console.log("----1---");
 
       // 离开网站后，保存信息
-      window.addEventListener("beforeunload", this.saveSongs);
+      // window.addEventListener("beforeunload", this.saveSongs);
     },
     methods: {
       formatTime,
@@ -259,6 +283,7 @@
       },
       begin() {
         const audio = this.getAudio();
+        audio.currentTime = 0;
         audio.play();
         this.isPlay = true;
       },
@@ -408,7 +433,32 @@
         let id = this.playList[this.mode][next];
         this.$bus.emit("playSong", { id });
       },
+      // 请求歌曲url || 请求歌曲缓存
+      async getcururl(id) {
+        let dbase = this.$store.state.songDB;
+        let objectStoreName = this.$store.state.songDBobjectStoreName;
+        try {
+          let res = await songIndexDB.findSpecialBase(dbase, objectStoreName, id);
+          console.log(res);
+          if (res !== undefined && res.createTime + 7 * 24 * 60 * 60 * 1000 > Date.now()) { // 缓存中有这个并且在七天之内
+            let URL = window.URL || window.webkitURL;
+            this.cururl = URL.createObjectURL(res.blob);
 
+            // URL.revokeObjectURL(this.url);
+          } else {  // 缓存中没有这个
+            if (res !== undefined) {  // 缓存超出七天，删除
+              songIndexDB.deleteBase(dbase, objectStoreName, id);
+            }
+            await getCurrentSongURL(id).then((res) => {
+              // console.log(res);
+              this.cururl = res.data[0].url;
+            });
+          }
+        } catch (error) {
+          console.log(error)
+        }
+        // console.log(newVal);
+      },
       // 改变播放模式
       changeMode() {
         if (this.mode == 2) {
@@ -446,6 +496,7 @@
           curname: this.curname,
           curpic: this.curpic,
           curdt: this.curdt,
+          cururl: this.cururl
         };
         // console.log(cursong);
         songStorage.setItem("cursong", cursong, expire);
@@ -461,7 +512,7 @@
       // 重新进入时读取数据
       initSongs(songs, cursong) {
         // console.log(songs, cursong);
-        if (!songs && !cursong) {
+        if (!songs || !cursong) {
           return;
         }
         for (let key in songs) {
@@ -469,14 +520,14 @@
           this.playList[0].push(parseInt(key));
           this.playList[1].push(parseInt(key));
         }
-        // console.log(cursong);
-        let { curars, curid, curname, curpic, curdt } = cursong;
+        console.log(cursong);
+        let { curars, curid, curname, curpic, curdt, cururl } = cursong;
         this.curid = curid;
         this.curars = curars;
         this.curname = curname;
         this.curpic = curpic;
         this.curdt = curdt;
-        this.url = this.baseUrl + curid + ".mp3";
+        this.cururl = cururl;
 
         // 三种播放模式
         this.playList[2] = this.curid;

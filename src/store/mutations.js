@@ -13,5 +13,9 @@ export default {
 
   setUserLikelist(state, payload) {
     state.likelist = payload;
+  },
+
+  createSongDB(state, payload) {
+    state.songDB = payload;
   }
 }

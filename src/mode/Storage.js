@@ -1,7 +1,7 @@
 export const songStorage = {
   setExpireMap: (key, expire) => {
     const expireMap = localStorage.getItem('EXPIRE_MAP') || "{}";
-    console.log(expireMap);
+    // console.log(expireMap);
     let addItem = { [key]: expire };
     // console.log(addItem);
     // console.log({ ...JSON.parse(expireMap) })
@@ -9,15 +9,15 @@ export const songStorage = {
       ...JSON.parse(expireMap),
       ...addItem,
     }))
-    console.log(localStorage.getItem('EXPIRE_MAP'));
+    // console.log(localStorage.getItem('EXPIRE_MAP'));
   },
   setItem: (key, value, expire) => {
     songStorage.setExpireMap(key, expire);
     // 这里要将map变成普通对象才能转换成JSON字符
-    console.log(value);
-    console.log(value instanceof Map);
+    // console.log(value);
+    // console.log(value instanceof Map);
     if (value instanceof Map) {
-      console.log('11111111');
+      // console.log('11111111');
       let obj = {};
       for (let [k, v] of value) {
         obj[k] = v;

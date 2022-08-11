@@ -92,6 +92,41 @@ export function getCurrentSong(ids) {
   })
 }
 
+// 获取当前播放歌曲url
+export function getCurrentSongURL(id) {
+  return request({
+    url: 'song/url',
+    params: {
+      id
+    }
+  })
+}
+
+// 获取当前播放歌曲的blob
+export function getBlob(url) {
+  return new Promise((resolve, reject) => {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'blob';
+    xhr.onload = function (e) {
+      if (this.readyState == 4) {
+        if (this.status == 200) {
+          // console.log(111);
+          var myBlob = this.response;
+          // console.log(myBlob);
+          resolve(myBlob);
+        } else {
+          reject(new Error());
+        }
+      } else {
+        reject(new Error())
+      }
+
+    }
+    xhr.send();
+  })
+}
+
 // 获取歌单分类
 export function getPlayListCategory() {
   return request({
@@ -336,5 +371,17 @@ export function likeMusicList(uid) {
 export function getBanner() {
   return request({
     url: '/banner',
+  })
+}
+
+// 获取歌单评论
+export function getListComment(id, offset = 1, limit = 20) {
+  return request({
+    url: '/comment/playlist',
+    params: {
+      id,
+      limit,
+      offset
+    }
   })
 }

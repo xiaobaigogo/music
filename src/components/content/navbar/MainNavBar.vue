@@ -65,7 +65,7 @@
     },
     computed: {
       user() {
-        console.log(this.$store.getters.getbriefUser);
+        // console.log(this.$store.getters.getbriefUser);
         return this.$store.getters.getbriefUser;
       },
     },
@@ -91,7 +91,7 @@
     },
     created() {
       getUserAccount().then((res) => {
-        console.log(res);
+        // console.log(res);
         this.$store.commit("changeUserInfo", res.profile);
       });
     },

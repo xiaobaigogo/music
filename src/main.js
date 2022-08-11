@@ -6,8 +6,6 @@ import store from './store'
 
 import lazyPlugin from 'vue3-lazy'
 
-import toast from 'components/common/toast'
-
 
 const app = createApp(App)
 
