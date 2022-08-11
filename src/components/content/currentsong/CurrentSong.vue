@@ -141,12 +141,16 @@
         this.curars = ar ? ar : this.songs.get(id).ar;
         this.curtime = 0;
         this.curdt = dt ? dt / 1000 : this.songs.get(id).dt / 1000; //传过来的dt是毫秒，所以要/1000
+        
         // url
         if(url) {
+          console.log('url:'+ url);
           this.cururl = url;
         } else if(this.songs.get(id).url) {
+          console.log('this.songs.get(id).url:' + url);
           this.cururl = this.songs.get(id).url;
         } else {
+          console.log('await');
           await this.getcururl(id);
         }
         // console.log(this.curid, this.curpic, this.curname, this.curars);
@@ -165,17 +169,31 @@
         this.playList[2] = id;
 
 
-        this.$nextTick((flag) => {
+        this.$nextTick(() => {
           // 等创建好dom节点再播放
           this.begin();
+        });
 
+        this.$nextTick(() => {
           // 离线缓存歌曲  // 放在nextTick是为了不阻碍播放渲染
           if (flag == false) {
-            getBlob(url).then((blob) => {
-              songIndexDB.insertBase(this.$store.state.songDB, this.$store.state.songDBobjectStoreName, { id, picUrl, name, ar: JSON.stringify(ar), dt, url, blob, createTime: Date.now() });
-            });
+            if(songIndexDB.checkDBStorage()) {  // 缓存空间够
+              getBlob(url).then((blob) => {
+                songIndexDB.insertBase(this.$store.state.songDB, this.$store.state.songDBobjectStoreName, { id, picUrl, name, ar: JSON.stringify(ar), dt, url, blob, createTime: Date.now() });
+              });
+            } else {  // 缓存空间不够
+              // 删除数据库首条数据
+              while(!songIndexDB.checkDBStorage()) {
+                songIndexDB.deleteEarlistBase(this.$store.state.songDB, this.$store.state.songDBobjectStoreName, songIndexDB.deleteBase);
+              }
+              getBlob(url).then((blob) => {
+                songIndexDB.insertBase(this.$store.state.songDB, this.$store.state.songDBobjectStoreName, { id, picUrl, name, ar: JSON.stringify(ar), dt, url, blob, createTime: Date.now() });
+              });
+            }
+            
+            
           }
-        });
+        })
       });
 
       // 播放歌单的全部播放
@@ -249,7 +267,7 @@
       // console.log("----1---");
 
       // 离开网站后，保存信息
-      // window.addEventListener("beforeunload", this.saveSongs);
+      window.addEventListener("beforeunload", this.saveSongs);
     },
     methods: {
       formatTime,

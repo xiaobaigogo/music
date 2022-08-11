@@ -123,5 +123,37 @@ export const songIndexDB = {
 
   deleteDB: (dbname) => {
     window.indexedDB.deleteDatabase(dbname)
+  },
+
+  checkDBStorage: async(maxUsed = 12000000000) => {
+    if (navigator.storage && navigator.storage.estimate) {
+      const quota = await navigator.storage.estimate();
+      // quota.usage -> 已用字节数。
+      // quota.quota -> 最大可用字节数。
+      const used = quota.usage;
+      if (used < maxUsed) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  },
+  
+  deleteEarlistBase: (dbase, objectStoreName, cb) => {
+    return new Promise((resolve, reject) => {
+      let res = dbase.transaction([objectStoreName]).objectStore(objectStoreName).openCursor();
+      res.onsuccess = function (event) {
+        console.log('成功')
+        if (event.target.result.value) {
+          console.log('delelelast:' + event.target.result.value);
+          typeof cb == 'function' && cb(dbase, objectStoreName, event.target.result.value.id);
+          resolve(event);
+        }
+      }
+      res.onerror = function () {
+        // console.log('获取数据失败')
+        reject('获取数据失败');
+      }
+    })
   }
 }

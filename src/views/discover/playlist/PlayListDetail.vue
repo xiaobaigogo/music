@@ -10,7 +10,7 @@
         </template>
       </list-content>
 
-      <comment :id="id" class="comment"></comment>
+      <comment class="playlist-comment" :id="id"></comment>
     </div>
     <div class="right">
       <playlist-detail-subscriber class="subscriber" :subscribers="subscribers"></playlist-detail-subscriber>
@@ -23,10 +23,10 @@
   import PlaylistDetailHeader from "./childComps/PlayListDetailHeader.vue";
   import PlaylistDetailSubscriber from "./childComps/PlayListDetailSubscriber.vue";
   import PlaylistDetailRecommend from "./childComps/PlayListDetailRecommend.vue";
+  import Comment from "./childComps/Comment.vue";
 
   import ListContent from "components/content/listcontent/ListContent.vue";
   import SongTable from "components/content/songtable/SongTable.vue";
-  import Comment from "components/content/comment/Comment.vue";
 
   import { PlayListDetail } from "network/class.js";
   import { getPlayListDetail } from "network/api.js";
@@ -109,7 +109,7 @@
     margin-top: 2rem;
   }
 
-  .comment {
+  .playlist-comment {
     margin-top: 2rem;
     width: 800px;
   }

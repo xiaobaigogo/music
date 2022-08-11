@@ -6,9 +6,6 @@
     <!-- </keep-alive> -->
     <current-song :showHeadAndBottom="showHeadAndBottom"></current-song>
     <bottom-bar v-show="showHeadAndBottom"></bottom-bar>
-    <!-- <demo height='300px' :estimatedItemSize=10 :listData="demoData" v-slot="slotProps">
-      <demo-item :item="slotProps.item"></demo-item>
-    </demo> -->
   </div>
 </template>
 

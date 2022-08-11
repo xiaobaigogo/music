@@ -1,39 +1,39 @@
 <template>
-  <header>
-    <h5>评论（共{{total}}条）</h5>
-  </header>
-  <virtual-list :listData="commentList" :total="total" :estimatedItemSize="50" height="900px" :pullDownload="true"
-    @pullDownload="pullDownload">
-    <template v-slot:vl-item="{user, content, id, timeStr, likedCount, liked}">
-      <li id="user">
-        <div id="left">
-          <img :src="user.picUrl" alt="">
-        </div>
-        <div id="center">
-          <span id="nickname">{{user.nickname}}</span>
-          <p id="content">{{content}}</p>
-          <span id="time">{{timeStr}}</span>
-        </div>
-        <div id="right">
-          <div id="like" :class="{liked: liked}"><i></i><span>{{likedCount}}</span></div>
-        </div>
-      </li>
-    </template>
-
-  </virtual-list>
+  <div>
+    <header>
+      <h5>评论（共{{total}}条）</h5>
+    </header>
+    <virtual-list :listData="commentList" :total="total" :estimatedItemSize="50" height="900px" :pullDownload="true"
+      @pullDownload="pullDownload">
+      <template v-slot:vl-item="{user, content, id, timeStr, likedCount, liked}">
+        <li id="user">
+          <div id="left">
+            <img :src="user.picUrl" alt="">
+          </div>
+          <div id="center">
+            <span id="nickname">{{user.nickname}}</span>
+            <p id="content">{{content}}</p>
+            <span id="time">{{timeStr}}</span>
+          </div>
+          <div id="right">
+            <div id="like" :class="{liked: liked}"><i></i><span>{{likedCount}}</span></div>
+          </div>
+        </li>
+      </template>
+    
+    </virtual-list>
+  </div>
 </template>
 
 <script>
   import VirtualList from "@/components/common/virtuallist/VirtualList.vue";
-  import VirtualListItem from "@/components/common/virtuallist/VirtualListItem.vue";
 
   import { getListComment } from "@/network/api.js";
 
   export default {
     name: "",
     components: {
-      VirtualList,
-      VirtualListItem
+      VirtualList
     },
     props: {
       id: {
